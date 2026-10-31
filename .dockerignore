@@ -1,0 +1,8 @@
+.git
+.github
+*.md
+!claude/**/*.md
+scripts/
+docker-compose.yml
+buildspec.yml
+config/soe.env.example

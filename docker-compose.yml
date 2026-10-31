@@ -1,0 +1,28 @@
+# Local build + test for the platform team (developers use scripts/start-dev.sh).
+#   docker compose build
+#   docker compose run --rm soe            # shell
+#   docker compose run --rm soe soe-doctor # health check
+services:
+  soe:
+    build:
+      context: .
+      args:
+        SOE_VERSION: 0.0.0-local
+    image: corporate-dev-soe:local
+    init: true
+    stdin_open: true
+    tty: true
+    hostname: soe
+    working_dir: /workspace
+    volumes:
+      - ./:/workspace
+      - soe-claude-config:/home/dev/.claude
+      - ${HOME}/.aws:/home/dev/.aws
+    environment:
+      AWS_PROFILE: ${SOE_AWS_PROFILE:-}
+      AWS_REGION: ${SOE_AWS_REGION:-ap-southeast-2}
+      CLAUDE_CODE_USE_BEDROCK: "1"
+      SOE_FIREWALL: "0"
+
+volumes:
+  soe-claude-config:

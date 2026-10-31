@@ -1,0 +1,33 @@
+# AWS CodeBuild - builds and publishes the SOE image to ECR.
+# Project settings: Ubuntu standard image (aws/codebuild/standard:7.0 or later),
+# "Privileged" enabled (required for Docker builds), and environment variables:
+#   SOE_VERSION   e.g. 1.0.0  (or derive from a git tag)
+#   PROMOTE       "true" to move the 'stable' tag (developers follow 'stable')
+version: 0.2
+
+env:
+  variables:
+    SOE_REPOSITORY: corporate-dev-soe
+    CLAUDE_CODE_VERSION: stable
+    PROMOTE: "false"
+
+phases:
+  pre_build:
+    commands:
+      - export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - export AWS_REGION=${AWS_REGION:-$AWS_DEFAULT_REGION}
+      - export SOE_VERSION=${SOE_VERSION:-$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0-${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}")}
+      # Enable arm64 emulation so one build produces Apple Silicon + Intel images
+      - docker run --privileged --rm tonistiigi/binfmt --install arm64
+      - bash -n bootstrap/*.sh scripts/*.sh
+  build:
+    commands:
+      - |
+        if [ "$PROMOTE" = "true" ]; then
+          ./scripts/publish.sh "$SOE_VERSION" --promote
+        else
+          ./scripts/publish.sh "$SOE_VERSION"
+        fi
+  post_build:
+    commands:
+      - echo "Published ${SOE_REPOSITORY}:${SOE_VERSION}"

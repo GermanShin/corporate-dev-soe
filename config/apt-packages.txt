@@ -1,0 +1,29 @@
+# Standard tools baked into every SOE image. One package per line.
+# Changing this list = a new SOE version (rebuild + publish).
+
+# Core
+ca-certificates
+curl
+git
+jq
+unzip
+zip
+less
+nano
+vim
+openssh-client
+bash-completion
+locales
+tzdata
+
+# Languages / build
+python3
+python3-pip
+python3-venv
+make
+
+# Networking + egress firewall (configure-network.sh)
+iptables
+ipset
+iproute2
+dnsutils

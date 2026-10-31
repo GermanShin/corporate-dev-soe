@@ -1,0 +1,28 @@
+# Egress allowlist used when the SOE firewall is ON (start-dev.sh --firewall).
+# One domain per line. {{AWS_REGION}} is replaced with the container's AWS_REGION.
+# Developers can add more at run time with SOE_EXTRA_DOMAINS=a.com,b.com
+
+# Claude Code (Anthropic API + login)
+api.anthropic.com
+claude.ai
+console.anthropic.com
+platform.claude.com
+
+# Amazon Bedrock / AWS auth
+bedrock-runtime.{{AWS_REGION}}.amazonaws.com
+bedrock.{{AWS_REGION}}.amazonaws.com
+sts.amazonaws.com
+sts.{{AWS_REGION}}.amazonaws.com
+oidc.{{AWS_REGION}}.amazonaws.com
+portal.sso.{{AWS_REGION}}.amazonaws.com
+
+# Source control
+github.com
+api.github.com
+codeload.github.com
+objects.githubusercontent.com
+
+# Package registries
+pypi.org
+files.pythonhosted.org
+registry.npmjs.org
