@@ -39,6 +39,8 @@ useradd --uid "${USER_UID}" --gid "${USER_GID}" --create-home --shell /bin/bash 
 # image, so Docker initialises new named volumes with the right ownership.
 install -d -o "${USER_UID}" -g "${USER_GID}" \
   "/home/${USERNAME}/.claude" "/home/${USERNAME}/.aws" "/home/${USERNAME}/.local/bin" /workspace
+# install -d only sets ownership on the leaf, so parents it created (.local) are root-owned.
+chown "${USER_UID}:${USER_GID}" "/home/${USERNAME}/.local"
 
 echo "==> System git defaults"
 git config --system --add safe.directory /workspace
